@@ -1,14 +1,16 @@
 import express from "express";
 import connectDB from "./db.js";
 import { User } from "./models/user.js";
+import mainRouter from "./route/index.js"
+
+const app = express();
+
+app.use(express.json());
+
 
  
 
 connectDB();
 
-await User.create({
-  username: "testuser",
-  password: "12345678",
-  firstname: "Test",
-  lastname: "User"
-});
+app.use("/api/v1", mainRouter);
+
