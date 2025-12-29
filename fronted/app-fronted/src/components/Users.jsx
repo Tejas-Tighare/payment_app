@@ -11,7 +11,7 @@ export const Users = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/v1/user/bulk?filter=" + filter,
+          "https://payment-app-gkxh.onrender.com/api/v1/user/bulk?filter=" + filter,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token")

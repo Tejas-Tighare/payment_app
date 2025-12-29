@@ -22,7 +22,7 @@ export const SendMoney = () => {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:3000/api/v1/account/transfer",
+        "https://payment-app-gkxh.onrender.com/api/v1/account/transfer",
         {
           to: id,
           amount: Number(amount),

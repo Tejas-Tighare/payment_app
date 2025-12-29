@@ -15,7 +15,7 @@ export const Signup = () => {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
+    const response = await axios.post("https://payment-app-gkxh.onrender.com/api/v1/user/signup", {
       username,
       firstname: firstName,
       lastname: lastName,
