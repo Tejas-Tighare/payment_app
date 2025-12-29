@@ -1,15 +1,19 @@
 import express from "express";
 import { z } from "zod";
 import { User } from "../models/user.js";
+import { Account } from "../models/account.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/auth.js";
 
 
+
+
 dotenv.config();
 
-export const router = express.Router();
+const router = express.Router();
 
 const signupSchema = z.object({
   username: z.string().min(3),
@@ -46,6 +50,13 @@ router.post("/signup", async (req, res) => {
       lastname,
       password: hashedPassword,
     });
+
+    const userId = user._id;
+
+    await Account.create({
+        userId,
+        balance: 1 + Math.random() * 10000
+    })
 
     const token = jwt.sign(
       { userId: user._id },
@@ -135,7 +146,6 @@ const updateSchema = z.object({
 }).strict();
 
 
-import mongoose from "mongoose";
 
 router.put("/update", authMiddleware, async (req, res) => {
   try {
@@ -182,6 +192,25 @@ router.put("/update", authMiddleware, async (req, res) => {
     });
   }
 });
+
+
+router.get("/bulk",authMiddleware, async (req, res) => {
+  try {
+    const filter = req.query.filter || "";
+
+    const users = await User.find({
+      $or: [
+        { firstname: { $regex: filter, $options: "i" } },
+        { lastname: { $regex: filter, $options: "i" } }
+      ]
+    }).select("firstname lastname username");;
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 
 
