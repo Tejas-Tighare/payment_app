@@ -1,15 +1,26 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
 export const SendMoney = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const id = searchParams.get("id");
   const name = searchParams.get("name");
+
   const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleTransfer = async () => {
+    if (!amount || Number(amount) <= 0) {
+      alert("Enter valid amount");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       await axios.post(
         "http://localhost:3000/api/v1/account/transfer",
         {
@@ -23,9 +34,15 @@ export const SendMoney = () => {
         }
       );
 
-      alert("Transfer successful");
+      alert("Transfer successful!");
+
+      // 🔁 Redirect to dashboard after success
+      navigate("/dashboard");
+
     } catch (err) {
       alert(err.response?.data?.message || "Transfer failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,9 +80,14 @@ export const SendMoney = () => {
 
               <button
                 onClick={handleTransfer}
-                className="w-full bg-green-500 text-white py-2 rounded-md"
+                disabled={loading}
+                className={`w-full py-2 rounded-md text-white cursor-pointer ${
+                  loading
+                    ? "bg-gray-400"
+                    : "bg-green-500 hover:bg-green-600"
+                }`}
               >
-                Initiate Transfer
+                {loading ? "Processing..." : "Initiate Transfer"}
               </button>
             </div>
           </div>
